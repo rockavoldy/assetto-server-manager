@@ -4,9 +4,9 @@ import {
     RaceControlDriverMapRaceControlDriverSessionCarInfo as SessionCarInfo
 } from "./models/RaceControl";
 
-import {CarUpdate, CarUpdateVec} from "./models/UDP";
-import {randomColor} from "randomcolor/randomColor";
-import {msToTime, prettifyName} from "./utils";
+import { CarUpdate, CarUpdateVec } from "./models/UDP";
+import { randomColor } from "randomcolor/randomColor";
+import { msToTime, prettifyName } from "./utils";
 import moment from "moment";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import ClickEvent = JQuery.ClickEvent;
@@ -33,7 +33,7 @@ const EventCollisionWithCar = 10,
     EventLapCompleted = 73,
     EventClientEvent = 130,
     EventRaceControl = 200
-;
+    ;
 
 interface SimpleCollision {
     WorldPos: CarUpdateVec
@@ -131,13 +131,13 @@ export class RaceControl {
                 let hoursString = "";
 
                 if (minutes < 10) {
-                    minutesString = "0"+minutes;
+                    minutesString = "0" + minutes;
                 } else {
                     minutesString = minutes.toLocaleString();
                 }
 
                 if (hours < 10) {
-                    hoursString = "0"+hours;
+                    hoursString = "0" + hours;
                 } else {
                     hoursString = hours.toLocaleString();
                 }
@@ -189,16 +189,16 @@ export class RaceControl {
 
         // Get lap/laps or time/totalTime
         if (this.status.SessionInfo.Time > 0) {
-            let timeInMS = (this.status.SessionInfo.Time * 60 * 1000) + (this.status.SessionInfo.WaitTime/126.166667 * 1000) - moment.duration(moment().utc().diff(moment(this.status.SessionStartTime).utc())).asMilliseconds();
+            let timeInMS = (this.status.SessionInfo.Time * 60 * 1000) + (this.status.SessionInfo.WaitTime / 126.166667 * 1000) - moment.duration(moment().utc().diff(moment(this.status.SessionStartTime).utc())).asMilliseconds();
 
-            let days = Math.floor(timeInMS/8.64e+7);
+            let days = Math.floor(timeInMS / 8.64e+7);
 
             timeRemaining = msToTime(timeInMS, false, false);
 
             if (days > 0) {
                 let dayText = " day + ";
 
-                if ( days > 1) {
+                if (days > 1) {
                     dayText = " days + ";
                 }
 
@@ -284,8 +284,9 @@ export class RaceControl {
         }
 
         const sessionInfo = this.status.SessionInfo;
+        const trackName = sessionInfo.Track.split("/").pop();
 
-        return "/content/tracks/" + sessionInfo.Track + "/ui" + (!!sessionInfo.TrackConfig ? "/" + sessionInfo.TrackConfig : "") + "/preview.png";
+        return "/content/tracks/" + trackName + "/ui" + (!!sessionInfo.TrackConfig ? "/" + sessionInfo.TrackConfig : "") + "/preview.png";
     }
 
     private handleIFrames(): void {
@@ -380,7 +381,7 @@ class LiveMap implements WebsocketHandler {
                     }
                 }
 
-                $(".dot").css({"transition": this.raceControl.status.CurrentRealtimePosInterval + "ms linear"});
+                $(".dot").css({ "transition": this.raceControl.status.CurrentRealtimePosInterval + "ms linear" });
                 break;
 
             case EventNewConnection:
@@ -527,8 +528,9 @@ class LiveMap implements WebsocketHandler {
         }
 
         const sessionInfo = this.raceControl.status.SessionInfo;
+        const trackName = sessionInfo.Track.split("/").pop();
 
-        return "/content/tracks/" + sessionInfo.Track + (!!sessionInfo.TrackConfig ? "/" + sessionInfo.TrackConfig : "") + "/map.png";
+        return "/content/tracks/" + trackName + (!!sessionInfo.TrackConfig ? "/" + sessionInfo.TrackConfig : "") + "/map.png";
     }
 
     private loadTrackMapImage(): void {
@@ -540,7 +542,7 @@ class LiveMap implements WebsocketHandler {
             that.correctMapDimensions();
         });
 
-        this.$trackMapImage.attr({"src": trackURL});
+        this.$trackMapImage.attr({ "src": trackURL });
     }
 
     private static mapRotationRatio: number = 1.07;
@@ -686,7 +688,7 @@ class LiveTimings implements WebsocketHandler {
             url: form.attr("action"),
             type: 'post',
             data: form.serialize(),
-            success:function(){
+            success: function () {
 
             }
         });
@@ -825,7 +827,7 @@ class LiveTimings implements WebsocketHandler {
                     dotClass += " dot-inactive";
                 }
 
-                $tdName.prepend($("<div/>").attr({"class": dotClass}).css("background", randomColor({
+                $tdName.prepend($("<div/>").attr({ "class": dotClass }).css("background", randomColor({
                     luminosity: 'bright',
                     seed: driver.CarInfo.DriverGUID,
                 })));
@@ -846,7 +848,7 @@ class LiveTimings implements WebsocketHandler {
             return;
         }
 
-        let $tr = $table.find("[data-guid='" + driver.CarInfo.DriverGUID + "'][data-car-model='"+ driver.CarInfo.CarModel + "']");
+        let $tr = $table.find("[data-guid='" + driver.CarInfo.DriverGUID + "'][data-car-model='" + driver.CarInfo.CarModel + "']");
 
         let addTrToTable = false;
 
@@ -911,7 +913,7 @@ class LiveTimings implements WebsocketHandler {
             if (moment(driver.LoadedTime).utc().add("10", "seconds").isSameOrAfter(moment().utc()) && !$("#" + loadedID).length) {
                 // car just loaded
                 let $tag = $("<span/>").attr("id", loadedID);
-                $tag.attr({'class': 'badge badge-success live-badge'});
+                $tag.attr({ 'class': 'badge badge-success live-badge' });
                 $tag.text("Loaded");
 
                 $tdEvents.append($tag);
@@ -928,7 +930,7 @@ class LiveTimings implements WebsocketHandler {
                     if (moment(collision.Time).utc().add("10", "seconds").isSameOrAfter(moment().utc()) && !$("#" + collisionID).length) {
                         let $tag = $("<span/>");
                         $tag.attr("id", collisionID);
-                        $tag.attr({'class': 'badge badge-danger live-badge'});
+                        $tag.attr({ 'class': 'badge badge-danger live-badge' });
 
                         let crashSpeed;
 
@@ -1093,9 +1095,9 @@ function randomColorForDriver(driverGUID: string): string {
 }
 
 const percentColors = [
-    {pct: 0.25, color: {r: 0x00, g: 0x00, b: 0xff}},
-    {pct: 0.625, color: {r: 0x00, g: 0xff, b: 0}},
-    {pct: 1.0, color: {r: 0xff, g: 0x00, b: 0}}
+    { pct: 0.25, color: { r: 0x00, g: 0x00, b: 0xff } },
+    { pct: 0.625, color: { r: 0x00, g: 0xff, b: 0 } },
+    { pct: 1.0, color: { r: 0xff, g: 0x00, b: 0 } }
 ];
 
 function getColorForPercentage(pct: number): string {

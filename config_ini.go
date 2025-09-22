@@ -75,6 +75,9 @@ type ServerConfig struct {
 
 func (sc ServerConfig) Write() error {
 	// overwrite server config
+	if !strings.HasPrefix(sc.CurrentRaceConfig.Track, "csp/3465/../D/../") {
+		sc.CurrentRaceConfig.Track = "csp/3465/../D/../" + sc.CurrentRaceConfig.Track
+	}
 	sc.GlobalServerConfig.WelcomeMessage = MOTDFilename
 
 	f := ini.NewFile([]ini.DataSource{nil}, ini.LoadOptions{
