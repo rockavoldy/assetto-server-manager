@@ -11,5 +11,6 @@ var (
 )
 
 func Premium() bool {
-	return IsPremium == "true"
+	return true
+	// return IsPremium == "true"
 }
