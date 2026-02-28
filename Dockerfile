@@ -5,14 +5,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV BUILD_DIR=${GOPATH}/src/github.com/JustaPenguin/assetto-server-manager
 ENV GO111MODULE=on
 
-RUN apt update && apt-get install -y build-essential libssl-dev curl nodejs tofrodos dos2unix zip unzip
+RUN apt update && apt-get install -y build-essential libssl-dev nodejs curl tofrodos dos2unix zip unzip
 
 # RUN curl -sL -o- https://fnm.vercel.app/install | bash
+# RUN curl -sL -o- https://fnm.vercel.app/install | bash -d ~/.fnm/
 # Download and install Node.js:
 # RUN ~/.fnm/fnm install 12
+# RUN ~/.fnm/fnm install 12
 
-
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+# RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+# RUN curl -sL https://raw.githubusercontent.com/mklement0/n-install/stable/bin/n-install | bash -s 12
 
 RUN apt install npm -y
 ADD . ${BUILD_DIR}
