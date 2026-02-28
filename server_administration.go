@@ -82,7 +82,6 @@ type motdTemplateVars struct {
 	Opts     *GlobalServerConfig
 }
 
-// build welcome messaged appended with csp extra options that are already encoded
 var CspConfigSeparator = strings.Repeat("\t", 32) + "$CSP0:"
 
 func BuildWelcomeMessage(welcomeMessage string, cspExtraConfig string) (string, error) {
@@ -108,7 +107,6 @@ func ToCutBase64(decoded []byte) string {
 func CompressZlib(data []byte) ([]byte, error) {
 	var b bytes.Buffer
 
-	// Level6 in .NET ≈ zlib level 6 in Go
 	w, err := zlib.NewWriterLevel(&b, 6)
 	if err != nil {
 		return nil, err
@@ -119,7 +117,6 @@ func CompressZlib(data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	// Important: Close to flush data
 	err = w.Close()
 	if err != nil {
 		return nil, err
