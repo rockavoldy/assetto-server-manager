@@ -154,7 +154,7 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 		opts.ContentManagerWelcomeMessage = r.FormValue("contentManagerWelcomeMessage")
 		opts.CSPExtraOptions = r.FormValue("cspExtraOptions")
 
-		welcome_message, err := BuildWelcomeMessage(opts.ContentManagerWelcomeMessage, opts.CSPExtraOptions)
+		welcomeMessage, err := BuildWelcomeMessage(opts.ContentManagerWelcomeMessage, opts.CSPExtraOptions)
 
 		if err != nil {
 			logrus.WithError(err).Error("couldn't build welcome message with csp options")
@@ -162,7 +162,7 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 			success = false
 		}
 
-		err = ioutil.WriteFile(filepath.Join(ServerInstallPath, WelcomeMessageFilename), []byte(welcome_message), 0644)
+		err = ioutil.WriteFile(filepath.Join(ServerInstallPath, WelcomeMessageFilename), []byte(welcomeMessage), 0644)
 
 		if err != nil {
 			logrus.WithError(err).Error("couldn't save welcome message")
