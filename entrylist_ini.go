@@ -41,7 +41,7 @@ func (e EntryList) Write() error {
 	for i, entrant := range e.AsSlice() {
 		entrant.PitBox = i
 
-		if !strings.HasSuffix(entrant.skin, "/ACA3") {
+		if !strings.HasSuffix(entrant.Skin, "/ACA3") {
 			entrant.Skin = entrant.Skin + "/ACA3"
 		}
 		// entrant.Skin = entrant.Skin
