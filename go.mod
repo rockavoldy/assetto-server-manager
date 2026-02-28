@@ -78,12 +78,20 @@ require (
 	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb
 	go.etcd.io/bbolt v1.3.2 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/text v0.3.2
-	golang.org/x/tools v0.0.0-20200911193555-6422fca01df9 // indirect
+	golang.org/x/tools v0.42.0 // indirect
+	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/yaml.v2 v2.2.7
+)
+
+replace (
+	golang.org/x/mod => golang.org/x/mod v0.3.0
+	golang.org/x/tools => golang.org/x/tools v0.0.0-20200911193555-6422fca01df9
+	golang.org/x/xerrors => golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 )
 
 go 1.13

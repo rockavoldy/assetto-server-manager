@@ -1,0 +1,33 @@
+name: Build ACSM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build --build-arg SM_VERSION=unstable -t acsm:build .
+
+      - name: Run Build
+        run: |
+          docker run --name build-container acsm:build
+
+      - name: Copy Artifact
+        run: |
+          mkdir build/
+          docker cp build-container:/usr/bin/server-manager ./build/
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/
+
+      - name: Cleanup
+        run: docker rm build-container

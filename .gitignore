@@ -32,3 +32,4 @@ assetto/
 *.map
 changelog_embed.go
 
+.DS_Store
