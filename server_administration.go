@@ -151,7 +151,7 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 		opts.ContentManagerWelcomeMessage = r.FormValue("contentManagerWelcomeMessage")
 		opts.CSPExtraOptions = r.FormValue("cspExtraOptions")
 
-		welcomeMessage, err := BuildWelcomeMessage(opts.ContentManagerWelcomeMessage, opts.CSPExtraOptions)
+		welcomeMessage, err := BuildWelcomeMessage(wrapped, opts.CSPExtraOptions)
 
 		if err != nil {
 			logrus.WithError(err).Error("couldn't build welcome message with csp options")
