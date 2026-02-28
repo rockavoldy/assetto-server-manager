@@ -40,6 +40,13 @@
             {{ end }}
         </div>
 
+        <div class="mb-3">
+            <h3>CSP Extra Options</h3>
+
+            <label for="cspExtraOptions">Extra CSP options to be added to the CSP header.</label>
+            <textarea id="cspExtraOptions" name="cspExtraOptions" class="form-control md-textarea text-area">{{ $.Opts.CSPExtraOptions }}</textarea>
+        </div>
+
 
         <button class="btn btn-success float-right mt-2" type="submit">Save</button>
     </form>

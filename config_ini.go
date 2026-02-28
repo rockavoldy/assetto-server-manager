@@ -78,7 +78,7 @@ func (sc ServerConfig) Write() error {
 	if !strings.HasPrefix(sc.CurrentRaceConfig.Track, "csp/3465/../D/../") {
 		sc.CurrentRaceConfig.Track = "csp/3465/../D/../" + sc.CurrentRaceConfig.Track
 	}
-	sc.GlobalServerConfig.WelcomeMessage = MOTDFilename
+	sc.GlobalServerConfig.WelcomeMessage = WelcomeMessageFilename
 
 	f := ini.NewFile([]ini.DataSource{nil}, ini.LoadOptions{
 		IgnoreInlineComment: true,
@@ -230,6 +230,7 @@ type GlobalServerConfig struct {
 	// Messages
 	ContentManagerWelcomeMessage string `ini:"-" show:"-"`
 	ServerJoinMessage            string `ini:"-" show:"-"`
+	CSPExtraOptions              string `ini:"-" show:"-"`
 }
 
 func (gsc GlobalServerConfig) GetName() string {

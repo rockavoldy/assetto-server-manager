@@ -1,6 +1,9 @@
 package servermanager
 
 import (
+	"bytes"
+	"compress/zlib"
+	"encoding/base64"
 	"encoding/json"
 	"html/template"
 	"io/ioutil"
@@ -70,12 +73,59 @@ func (sah *ServerAdministrationHandler) home(w http.ResponseWriter, r *http.Requ
 }
 
 const MOTDFilename = "motd.txt"
+const WelcomeMessageFilename = "welcome_message.txt"
 
 type motdTemplateVars struct {
 	BaseTemplateVars
 
 	MOTDText string
 	Opts     *GlobalServerConfig
+}
+
+// build welcome messaged appended with csp extra options that are already encoded
+var CspConfigSeparator = strings.Repeat("\t", 32) + "$CSP0:"
+
+func BuildWelcomeMessage(welcomeMessage string, cspExtraConfig string) (string, error) {
+	if strings.TrimSpace(cspExtraConfig) == "" {
+		return welcomeMessage, nil
+	}
+
+	compressed, err := CompressZlib([]byte(cspExtraConfig))
+	if err != nil {
+		return "", err
+	}
+
+	encoded := ToCutBase64(compressed)
+
+	return welcomeMessage + CspConfigSeparator + encoded, nil
+}
+
+func ToCutBase64(decoded []byte) string {
+	encoded := base64.StdEncoding.EncodeToString(decoded)
+	return strings.TrimRight(encoded, "=")
+}
+
+func CompressZlib(data []byte) ([]byte, error) {
+	var b bytes.Buffer
+
+	// Level6 in .NET ≈ zlib level 6 in Go
+	w, err := zlib.NewWriterLevel(&b, 6)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = w.Write(data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Important: Close to flush data
+	err = w.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Bytes(), nil
 }
 
 func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +152,23 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 
 		opts.ServerJoinMessage = r.FormValue("serverJoinMessage")
 		opts.ContentManagerWelcomeMessage = r.FormValue("contentManagerWelcomeMessage")
+		opts.CSPExtraOptions = r.FormValue("cspExtraOptions")
+
+		welcome_message, err := BuildWelcomeMessage(opts.ContentManagerWelcomeMessage, opts.CSPExtraOptions)
+
+		if err != nil {
+			logrus.WithError(err).Error("couldn't build welcome message with csp options")
+			AddErrorFlash(w, r, "Failed to save message changes")
+			success = false
+		}
+
+		err = ioutil.WriteFile(filepath.Join(ServerInstallPath, WelcomeMessageFilename), []byte(welcome_message), 0644)
+
+		if err != nil {
+			logrus.WithError(err).Error("couldn't save welcome message")
+			AddErrorFlash(w, r, "Failed to save message changes")
+			success = false
+		}
 
 		if err := sah.store.UpsertServerOptions(opts); err != nil {
 			logrus.WithError(err).Error("couldn't save messages")
@@ -114,7 +181,7 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	b, err := ioutil.ReadFile(filepath.Join(ServerInstallPath, MOTDFilename))
+	MOTDTextBytes, err := ioutil.ReadFile(filepath.Join(ServerInstallPath, MOTDFilename))
 
 	if err != nil && !os.IsNotExist(err) {
 		logrus.WithError(err).Error("couldn't find motd.txt")
@@ -123,7 +190,7 @@ func (sah *ServerAdministrationHandler) motd(w http.ResponseWriter, r *http.Requ
 	}
 
 	sah.viewRenderer.MustLoadTemplate(w, r, "server/motd.html", &motdTemplateVars{
-		MOTDText: string(b),
+		MOTDText: string(MOTDTextBytes),
 		Opts:     opts,
 	})
 }

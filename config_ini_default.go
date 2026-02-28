@@ -30,6 +30,7 @@ func ConfigIniDefault() ServerConfig {
 			RestartEventOnServerManagerLaunch: 1,
 			ContentManagerWelcomeMessage:      defaultContentManagerDescription,
 			ShowEventDetailsPopup:             true,
+			CSPExtraOptions:                   "",
 		},
 
 		CurrentRaceConfig: CurrentRaceConfig{
